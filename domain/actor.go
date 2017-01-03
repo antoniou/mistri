@@ -1,4 +1,4 @@
-package main
+package domain
 
 import (
 	"io/ioutil"
@@ -8,7 +8,23 @@ import (
 	"github.com/antoniou/zero2Pipe/lambda"
 )
 
-func installFunctions(path string, s3bucket string) {
+type Actor interface {
+	Run(interface{}) error
+}
+
+// LambdaActor implements Actor
+type LambdaActor struct {
+	S3Bucket       string
+	FunctionSource string
+}
+
+func (l *LambdaActor) Run(interface{}) error {
+	log.Println("Installing functions!")
+	l.installFunctions(l.FunctionSource, l.S3Bucket)
+	return nil
+}
+
+func (l *LambdaActor) installFunctions(path string, s3bucket string) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		log.Fatal(err)
@@ -28,8 +44,4 @@ func installFunctions(path string, s3bucket string) {
 		})
 		f.Setup()
 	}
-}
-
-func mains() {
-	installFunctions("functions", "lambda-store-eu-west-1-329485089133")
 }
