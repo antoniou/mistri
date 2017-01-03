@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/antoniou/z2p/lambda"
+	"github.com/antoniou/zero2Pipe/lambda"
 )
 
 func install_functions(path string, s3bucket string) {
