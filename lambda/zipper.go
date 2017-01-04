@@ -48,7 +48,7 @@ func (z LambdaZipper) Zip(source, target string) error {
 
 		fmt.Println("Ading file ", path)
 		if baseDir != "" {
-			header.Name = strings.TrimPrefix(path, source)
+			header.Name = filepath.Join(".", strings.TrimPrefix(path, source))
 		}
 
 		if info.IsDir() {
