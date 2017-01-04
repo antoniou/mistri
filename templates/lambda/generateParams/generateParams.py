@@ -101,8 +101,8 @@ def get_configuration_file(s3, artifact, file_in_zip):
 
 def extend_configuration_file(config_file, artifact_location):
     config = json.loads(config_file)
-    config['Properties']['S3ConfigBucketName'] = artifact_location['location']['s3Location']['bucketName']
-    config['Properties']['S3ConfigBucketObject'] = artifact_location['location']['s3Location']['objectKey']
+    config['Parameters']['S3ConfigBucketName'] = artifact_location['location']['s3Location']['bucketName']
+    config['Parameters']['S3ConfigBucketObject'] = artifact_location['location']['s3Location']['objectKey']
 
     tmp_file = tempfile.NamedTemporaryFile(delete=False)
     json.dump(config, tmp_file)
