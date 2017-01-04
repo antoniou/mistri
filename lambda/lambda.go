@@ -26,10 +26,16 @@ func (f *Function) Setup() {
 func (f *Function) compile() {
 
 	var out, stderr bytes.Buffer
+	requirementsFile := fmt.Sprintf("%s/requirements.txt", f.Path)
+
+	if _, err := os.Stat(requirementsFile); os.IsNotExist(err) {
+		log.Printf("No requirements file found for %s, skipping", f.Path)
+		return
+	}
 	cmd := exec.Command("pip",
 		"install",
 		"-r",
-		fmt.Sprintf("%s/requirements.txt", f.Path),
+		requirementsFile,
 		"-t",
 		f.Name,
 	)
