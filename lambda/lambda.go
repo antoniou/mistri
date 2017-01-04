@@ -77,11 +77,12 @@ func NewFunction(attrs map[string]string) *Function {
 		path = attrs["name"]
 	}
 
+	target := strings.Join([]string{attrs["name"], ".zip"}, "")
 	return &Function{
 		Name:     attrs["name"],
 		Path:     path,
 		S3Bucket: attrs["s3bucket"],
-		Target:   strings.Join([]string{attrs["name"], ".zip"}, ""),
-		S3Key:    strings.Join([]string{attrs["s3KeyPrefix"], attrs["name"]}, "/"),
+		Target:   target,
+		S3Key:    strings.Join([]string{attrs["s3KeyPrefix"], target}, "/"),
 	}
 }
