@@ -9,7 +9,7 @@
                                         "Fn::Join": [
                                                 "-",
                                                 [
-                                                        "lambda-store-eu-west-2",
+                                                        "lambda-store-eu-west-1",
                                                         {
                                                                 "Ref": "AWS::AccountId"
                                                         }
