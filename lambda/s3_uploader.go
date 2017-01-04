@@ -15,9 +15,9 @@ type Uploader interface {
 type S3Uploader struct {
 }
 
-func (s3 S3Uploader) Upload(lambda_f *Function) error {
-	log.Printf("Uploading function %s to S3 Bucket %s", lambda_f.Name, lambda_f.S3Bucket)
-	zf, _ := os.Open(lambda_f.Target)
+func (s3 S3Uploader) Upload(lambdaF *Function) error {
+	log.Printf("Uploading function %s to S3 Bucket %s", lambdaF.Name, lambdaF.S3Bucket)
+	zf, _ := os.Open(lambdaF.Target)
 	// The session the S3 Uploader will use
 	sess, _ := session.NewSession()
 
@@ -25,8 +25,8 @@ func (s3 S3Uploader) Upload(lambda_f *Function) error {
 	uploader := s3manager.NewUploader(sess)
 
 	upParams := &s3manager.UploadInput{
-		Bucket: &lambda_f.S3Bucket,
-		Key:    &lambda_f.S3Key,
+		Bucket: &lambdaF.S3Bucket,
+		Key:    &lambdaF.S3Key,
 		Body:   zf,
 	}
 
