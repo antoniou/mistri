@@ -18,9 +18,9 @@ type Function struct {
 }
 
 func (f *Function) Setup() {
+	defer f.cleanup()
 	f.compile()
 	f.install()
-	f.cleanup()
 }
 
 func (f *Function) compile() {
@@ -53,6 +53,9 @@ func (f *Function) compile() {
 func (f *Function) install() {
 	var zipManager Zipper = LambdaZipper{}
 	err := zipManager.Zip(f.Path, f.Target)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var uploader Uploader = S3Uploader{}
 	err = uploader.Upload(f)
