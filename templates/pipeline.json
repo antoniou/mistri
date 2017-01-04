@@ -1,6 +1,13 @@
 {
         "AWSTemplateFormatVersion" : "2010-09-09",
         "Description" : "Template for creation of AWS CodePipeline pipeline",
+        "Parameters": {
+          "PipelineName": {
+            "Type" : "String",
+            "Default": "SimplePipeline",
+            "Description": "Name of the pipeline to be shown in AWS CodePipeline"
+          }
+        },
         "Resources" : {
                 "ArtifactStoreS3Bucket": {
                         "Type" : "AWS::S3::Bucket",
@@ -167,7 +174,9 @@
                 "Pipeline": {
                         "Type" : "AWS::CodePipeline::Pipeline",
                         "Properties" : {
-                                "Name" : "SimplePipeline",
+                                "Name" : {
+                                  "Ref": "PipelineName"
+                                },
                                 "ArtifactStore" : {
                                         "Type": "S3",
                                         "Location" : {
@@ -546,7 +555,17 @@
                         "Properties" : {
                               "Code" : {
                                     "S3Bucket": "lambda-store-eu-west-1-329485089133",
-                                    "S3Key": "genBuildParams.zip"
+                                    "S3Key": {
+                                      "Fn::Join": [
+                                              "/",
+                                              [
+                                                      {
+                                                              "Ref": "PipelineName"
+                                                      },
+                                                      "genBuildParams.zip"
+                                              ]
+                                      ]
+                                    }
                               },
                               "Description" : "Lambda Function that generates build-time parameters",
                               "FunctionName" : "genBuildParams",
@@ -566,7 +585,17 @@
                         "Properties" : {
                               "Code" : {
                                     "S3Bucket": "lambda-store-eu-west-1-329485089133",
-                                    "S3Key": "generateParams.zip"
+                                    "S3Key": {
+                                      "Fn::Join": [
+                                              "/",
+                                              [
+                                                      {
+                                                              "Ref": "PipelineName"
+                                                      },
+                                                      "generateParams.zip"
+                                              ]
+                                      ]
+                                    }
                               },
                               "Description" : "Lambda Function that generates deploy-time parameters",
                               "FunctionName" : "generateDeployParams",
