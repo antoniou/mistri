@@ -1,35 +1,30 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
-	"strings"
+	"os"
 
-	"github.com/antoniou/zero2Pipe/lambda"
+	"github.com/antoniou/zero2Pipe/domain"
 )
 
-func installFunctions(path string, s3bucket string) {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		log.Fatal(err)
-	}
+var pipelineFactories = make(map[string]domain.PipelineFactory)
 
-	for _, file := range files {
-		if !file.IsDir() {
-			continue
-		}
-
-		log.Printf("[DEBUG] Installing function %s", file.Name())
-		f := lambda.NewFunction(map[string]string{
-			"name":        file.Name(),
-			"path":        strings.Join([]string{path, file.Name()}, "/"),
-			"s3bucket":    s3bucket,
-			"s3KeyPrefix": "SimplePipeline",
-		})
-		f.Setup()
-	}
+func main() {
+	cli, _ := New()
+	cli.Run(os.Args)
 }
 
-func mains() {
-	installFunctions("functions", "lambda-store-eu-west-1-329485089133")
+func Register(name string, factory domain.PipelineFactory) {
+	if factory == nil {
+		log.Fatalf("Pipeline factory %s does not exist.", name)
+	}
+	_, registered := pipelineFactories[name]
+	if registered {
+		log.Fatalf("Pipeline factory %s already registered. Ignoring.", name)
+	}
+	pipelineFactories[name] = factory
+}
+
+func init() {
+	Register("AWS_CP", domain.NewAWSCodePipeline)
 }
