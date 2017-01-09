@@ -6,28 +6,29 @@ import (
 
 func NewAWSCodePipeline(conf map[string]string) (Pipeline, error) {
 	return &AWSCodePipeline{
-		Name: conf["name"],
+		BasePipeline{
+			Name: conf["name"],
+		},
 	}, nil
 }
 
 // AWSCodePipeline implements the Pipeline interface
 type AWSCodePipeline struct {
-	Name  string
-	Steps []Actor
+	BasePipeline
 }
 
 func (p *AWSCodePipeline) Create(args []string) error {
-	log.Printf("Creating pipeline %s", args[0])
+	log.Printf("Creating AWS CodePipeline with name %s", p.Name)
 
 	p.Steps = []Actor{
-		// &CloudFormationActor{
-		// 	Template:  "templates/lambda-store.json",
-		// 	StackName: "s3-lambda-bucket",
-		// },
-		// &LambdaActor{
-		// 	S3Bucket:       "lambda-store-eu-west-1-329485089133",
-		// 	FunctionSource: "templates/lambda",
-		// },
+		&CloudFormationActor{
+			Template:  "templates/lambda-store.json",
+			StackName: "s3-lambda-bucket",
+		},
+		&LambdaActor{
+			S3Bucket:       "lambda-store-eu-west-1-329485089133",
+			FunctionSource: "templates/lambda",
+		},
 		&CloudFormationActor{
 			Template:  "templates/pipeline.json",
 			StackName: "code-pipeline",
