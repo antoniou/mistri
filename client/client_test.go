@@ -7,11 +7,10 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
-	cli, err := New()
+	cli := New()
 
 	assert.NotNil(t, cli)
 	assert.IsType(t, new(Client), cli)
-	assert.Nil(t, err)
 }
 
 func TestRegisterCommands(t *testing.T) {

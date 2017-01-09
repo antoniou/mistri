@@ -1,7 +1,7 @@
 package client
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/antoniou/zero2Pipe/domain"
 )
@@ -12,7 +12,7 @@ type CreateCommand struct {
 	BaseCommand
 }
 
-// New returns a CreateCommand instance
+// NewCreateCommand returns a CreateCommand instance
 func NewCreateCommand() *CreateCommand {
 
 	return &CreateCommand{
@@ -25,12 +25,22 @@ func NewCreateCommand() *CreateCommand {
 	}
 }
 
-func (c *CreateCommand) Run(args []string) int {
-	pipeline := domain.AWSCodePipeline{}
-	fmt.Println(pipeline.Create(args))
-	return 0
-}
+func (c *CreateCommand) Run(args []string) error {
+	if len(args) == 0 {
+		log.Fatalf("The %s command expects at least one argument", c.Name)
+	}
 
-func (c *CreateCommand) Help() string {
-	return "Create command Help"
+	pipeline, err := domain.NewPipeline(map[string]string{
+		"provider": "AWS_CP",
+		"name":     args[0],
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := pipeline.Create(args); err != nil {
+		log.Fatal(err)
+	}
+
+	return nil
 }

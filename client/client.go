@@ -37,7 +37,7 @@ func (c *Client) RegisterCommands() error {
 	return err
 }
 
-func New() (c *Client, e error) {
+func New() (c *Client) {
 	c = &Client{}
 	c.RegisterCommands()
 
@@ -55,7 +55,7 @@ func New() (c *Client, e error) {
 		})
 	}
 	c.app = app
-	return c, nil
+	return c
 }
 
 // clientError is an error used to signal different error situations in command handling.

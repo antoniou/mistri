@@ -1,9 +1,10 @@
 package client
 
+import "fmt"
+
 // A Command is a runnable sub-command of a CLI.
 type Command interface {
-	Help() string
-	Run(args []string) int
+	Run(args []string) error
 }
 
 type BaseCommand struct {
@@ -14,10 +15,6 @@ type BaseCommand struct {
 	Action      func(interface{}) error
 }
 
-func (c *BaseCommand) Run(args []string) int {
-	return 0
-}
-
-func (c *BaseCommand) Help() string {
-	return "Help"
+func (c *BaseCommand) Run(args []string) error {
+	return fmt.Errorf("Should not be implemented")
 }
