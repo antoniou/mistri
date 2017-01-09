@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/cloudformation/cloudformationiface"
 	"github.com/stretchr/testify/assert"
@@ -96,6 +97,38 @@ func (suite *CloudformationActorTestSuite) TestWaitUntilStackCreateCompleteRetur
 	suite.service.AssertCalled(suite.T(), "CreateStack")
 	suite.service.AssertCalled(suite.T(), "WaitUntilStackCreateComplete")
 	suite.service.AssertExpectations(suite.T())
+}
+
+func (suite *CloudformationActorTestSuite) TestCreateStackIsCalledWithRightParameters() {
+	actor := CloudFormationActor{
+		Template:  "../templates/lambda-store.json",
+		StackName: "s3-lambda-bucket",
+		Parameters: map[string]string{
+			"foo": "bar",
+		},
+	}
+
+	templateBody, _ := actor.templateContents()
+	expected := &cloudformation.CreateStackInput{
+		StackName: aws.String(actor.StackName),
+		Capabilities: []*string{
+			aws.String("CAPABILITY_NAMED_IAM"),
+		},
+		TemplateBody: aws.String(templateBody),
+		Parameters: []*cloudformation.Parameter{
+			{
+				ParameterKey:     aws.String("foo"),
+				ParameterValue:   aws.String("bar"),
+				UsePreviousValue: aws.Bool(true),
+			},
+		},
+	}
+
+	actual, err := actor.createStackInput()
+
+	assert.Nil(suite.T(), err)
+	assert.EqualValues(suite.T(), expected.Parameters, actual.Parameters)
+	assert.EqualValues(suite.T(), expected, actual)
 }
 
 func TestCloudformationActorTestSuite(t *testing.T) {

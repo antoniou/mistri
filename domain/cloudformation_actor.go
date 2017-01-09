@@ -16,8 +16,9 @@ import (
 // CloudFormationActor implements the Actor interface and provisions a
 // cloudformation stack
 type CloudFormationActor struct {
-	Template  string
-	StackName string
+	Template   string
+	StackName  string
+	Parameters map[string]string
 }
 
 func (c *CloudFormationActor) Run(interface{}) error {
@@ -36,17 +37,39 @@ func (c *CloudFormationActor) Run(interface{}) error {
 	return err
 }
 
-func (c *CloudFormationActor) createStack(service cloudformationiface.CloudFormationAPI) error {
+func (c *CloudFormationActor) createStackInput() (*cloudformation.CreateStackInput, error) {
 	template, err := c.templateContents()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	params := &cloudformation.CreateStackInput{
+
+	parameters := make([]*cloudformation.Parameter, 0)
+	for pkey, pvalue := range c.Parameters {
+		parameters = append(parameters, &cloudformation.Parameter{
+			ParameterKey:     aws.String(pkey),
+			ParameterValue:   aws.String(pvalue),
+			UsePreviousValue: aws.Bool(true),
+		})
+	}
+
+	stackInput := &cloudformation.CreateStackInput{
 		StackName: aws.String(c.StackName),
 		Capabilities: []*string{
 			aws.String("CAPABILITY_NAMED_IAM"),
 		},
 		TemplateBody: aws.String(template),
+		Parameters:   parameters,
+	}
+
+	return stackInput, nil
+
+}
+
+func (c *CloudFormationActor) createStack(service cloudformationiface.CloudFormationAPI) error {
+	params, err := c.createStackInput()
+	if err != nil {
+		fmt.Printf("Error creating Stack Input Parameters: %s", err.Error())
+		return err
 	}
 
 	resp, err := service.CreateStack(params)
