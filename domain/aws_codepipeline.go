@@ -31,7 +31,11 @@ func (p *AWSCodePipeline) Create(args []string) error {
 		},
 		&CloudFormationActor{
 			Template:  "templates/pipeline.json",
-			StackName: "code-pipeline",
+			StackName: p.Name,
+			Parameters: map[string]string{
+				"ApplicationRepository": "nevergreen-standalone",
+				"PipelineName":          p.Name,
+			},
 		},
 	}
 
