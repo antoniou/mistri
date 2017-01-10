@@ -23,6 +23,23 @@ func (suite *SourceTestSuite) TestCurrentPathSource() {
 	assert.Equal(suite.T(), "antoniou", source.Owner())
 }
 
+func (suite *SourceTestSuite) TestInvalidPathSource() {
+	source, err := NewPathSource("/invalid/path")
+
+	assert.NotNil(suite.T(), err)
+	assert.Nil(suite.T(), source)
+	assert.Contains(suite.T(), err.Error(), "Could not find repository")
+}
+
+func (suite *SourceTestSuite) TestSourceNotSupported() {
+	// path := "."
+	// defer exec.Command("bash", "-c", fmt.Sprintf("cd %s; git remote remove deleteme", path)).Output()
+	source, err := NewPathSource(".")
+
+	assert.NotNil(suite.T(), err)
+	assert.Nil(suite.T(), source)
+}
+
 func TestSourceTestSuite(t *testing.T) {
 	suite.Run(t, new(SourceTestSuite))
 }

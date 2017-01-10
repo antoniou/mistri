@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"log"
+	"fmt"
 	"os/exec"
 	"strings"
 )
@@ -22,7 +22,10 @@ func NewPathSource(path string) (Source, error) {
 	c := &PathSource{
 		path: path,
 	}
-	c.resolve()
+	if err := c.resolve(); err != nil {
+		return nil, err
+	}
+
 	return c, nil
 }
 
@@ -34,11 +37,10 @@ func (c *PathSource) Owner() string {
 	return c.owner
 }
 
-func (c *PathSource) resolve() string {
-	// out, err := exec.Command(fmt.Sprintf("cd %s", c.path)).Output()
-	out, err := exec.Command("git", "remote", "get-url", "origin").Output()
+func (c *PathSource) resolve() error {
+	out, err := exec.Command("bash", "-c", fmt.Sprintf("set -e; cd %s;git remote get-url origin", c.path)).Output()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("Could not find repository under path %s: %s", c.path, err.Error())
 	}
 
 	url := strings.TrimSpace(string(out))
@@ -46,5 +48,5 @@ func (c *PathSource) resolve() string {
 
 	c.owner = urlItems[len(urlItems)-2]
 	c.name = urlItems[len(urlItems)-1]
-	return string(out)
+	return nil
 }

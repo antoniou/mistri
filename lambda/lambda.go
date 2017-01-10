@@ -17,20 +17,28 @@ type Function struct {
 	S3Key    string
 }
 
-func (f *Function) Setup() {
+func (f *Function) Setup() error {
 	defer f.cleanup()
-	f.compile()
-	f.install()
+
+	if err := f.compile(); err != nil {
+		return fmt.Errorf("Error during function compilation: %s", err)
+	}
+
+	if err := f.install(); err != nil {
+		return fmt.Errorf("Error during function installation: %s", err)
+	}
+
+	return nil
 }
 
-func (f *Function) compile() {
+func (f *Function) compile() error {
 
 	var out, stderr bytes.Buffer
 	requirementsFile := fmt.Sprintf("%s/requirements.txt", f.Path)
 
 	if _, err := os.Stat(requirementsFile); os.IsNotExist(err) {
 		log.Printf("No requirements file found for %s, skipping", f.Path)
-		return
+		return nil
 	}
 	cmd := exec.Command("pip",
 		"install",
@@ -44,25 +52,27 @@ func (f *Function) compile() {
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		log.Fatal(fmt.Sprint(err) + ": " + stderr.String())
+		return err
 	}
 
 	log.Printf(out.String())
+	return nil
 }
 
-func (f *Function) install() {
+func (f *Function) install() error {
 	var zipManager Zipper = LambdaZipper{}
 	err := zipManager.Zip(f.Path, f.Target)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	var uploader Uploader = S3Uploader{}
 	err = uploader.Upload(f)
-
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }
 
 func (f *Function) cleanup() {
