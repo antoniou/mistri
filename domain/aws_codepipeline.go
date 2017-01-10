@@ -39,9 +39,10 @@ func (p *AWSCodePipeline) createSteps() {
 			Template:  "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/pipeline.json",
 			StackName: p.Name,
 			Parameters: map[string]string{
-				"ApplicationRepositoryName":  p.Source.Name(),
-				"ApplicationRepositoryOwner": p.Source.Owner(),
-				"PipelineName":               p.Name,
+				"ApplicationRepositoryName":       p.Source.Name(),
+				"ApplicationRepositoryOwner":      p.Source.Owner(),
+				"ApplicationRepositoryOAuthToken": p.Source.Auth(),
+				"PipelineName":                    p.Name,
 			},
 		},
 	}

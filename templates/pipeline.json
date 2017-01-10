@@ -14,6 +14,10 @@
           "ApplicationRepositoryOwner": {
             "Type": "String",
             "Description": "The Github user account that the repository belongs to"
+          },
+          "ApplicationRepositoryOAuthToken": {
+            "Type": "String",
+            "Description": "The Github OAuthToken that will allow CodePipeline to use the repository"
           }
         },
         "Resources" : {
@@ -223,7 +227,9 @@
                                                                           "Ref": "ApplicationRepositoryName"
                                                                         },
                                                                         "Branch": "master",
-                                                                        "OAuthToken" : "THIS NEEDS TO BE AN INPUT PARAMETER"
+                                                                        "OAuthToken" : {
+                                                                          "Ref": "ApplicationRepositoryOAuthToken"
+                                                                        }
                                                                 },
                                                                 "RunOrder": 1
                                                         },
@@ -244,7 +250,9 @@
                                                                         "Owner": "antoniou",
                                                                         "Repo": "zero2Pipeline",
                                                                         "Branch": "master",
-                                                                        "OAuthToken" : "THIS NEEDS TO BE AN INPUT PARAMETER"
+                                                                        "OAuthToken" : {
+                                                                          "Ref": "ApplicationRepositoryOAuthToken"
+                                                                        }
                                                                 },
                                                                 "RunOrder": 1
                                                         }
@@ -625,7 +633,9 @@
                 "DockerRepository": {
                   "Type": "AWS::ECR::Repository",
                   "Properties": {
-                    "RepositoryName": "docker-codebuild-sample",
+                    "RepositoryName": {
+                      "Ref": "PipelineName"
+                    },
                     "RepositoryPolicyText": {
                       "Version": "2012-10-17",
                       "Statement": [
