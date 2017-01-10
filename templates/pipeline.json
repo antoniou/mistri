@@ -7,9 +7,13 @@
             "Default": "SimplePipeline",
             "Description": "Name of the pipeline to be shown in AWS CodePipeline"
           },
-          "ApplicationRepository": {
+          "ApplicationRepositoryName": {
             "Type": "String",
             "Description": "Name of the Github repository to use as application source, inside a Github user account"
+          },
+          "ApplicationRepositoryOwner": {
+            "Type": "String",
+            "Description": "The Github user account that the repository belongs to"
           }
         },
         "Resources" : {
@@ -212,9 +216,11 @@
                                                                         }
                                                                 ],
                                                                 "Configuration": {
-                                                                        "Owner": "antoniou",
+                                                                        "Owner": {
+                                                                          "Ref": "ApplicationRepositoryOwner"
+                                                                        },
                                                                         "Repo": {
-                                                                          "Ref": "ApplicationRepository"
+                                                                          "Ref": "ApplicationRepositoryName"
                                                                         },
                                                                         "Branch": "master",
                                                                         "OAuthToken" : "THIS NEEDS TO BE AN INPUT PARAMETER"
