@@ -5,11 +5,18 @@ import (
 )
 
 func NewAWSCodePipeline(conf map[string]string) (Pipeline, error) {
-	return &AWSCodePipeline{
+	source, err := NewPathSource(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+	p := &AWSCodePipeline{
 		BasePipeline{
-			Name: conf["name"],
+			Name:   conf["name"],
+			Source: source,
 		},
-	}, nil
+	}
+	p.createSteps()
+	return p, nil
 }
 
 // AWSCodePipeline implements the Pipeline interface
@@ -17,41 +24,25 @@ type AWSCodePipeline struct {
 	BasePipeline
 }
 
-func (p *AWSCodePipeline) Create(args []string) error {
-	log.Printf("Creating AWS CodePipeline with name %s", p.Name)
-
+func (p *AWSCodePipeline) createSteps() {
 	p.Steps = []Actor{
 		&CloudFormationActor{
-			Template:  "templates/lambda-store.json",
+			Template:  "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/lambda-store.json",
 			StackName: "s3-lambda-bucket",
 		},
 		&LambdaActor{
 			S3Bucket:       "lambda-store-eu-west-1-329485089133",
-			FunctionSource: "templates/lambda",
+			S3KeyPrefix:    p.Name,
+			FunctionSource: "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/lambda",
 		},
 		&CloudFormationActor{
-			Template:  "templates/pipeline.json",
+			Template:  "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/pipeline.json",
 			StackName: p.Name,
 			Parameters: map[string]string{
-				"ApplicationRepository": "nevergreen-standalone",
-				"PipelineName":          p.Name,
+				"ApplicationRepositoryName":  p.Source.Name(),
+				"ApplicationRepositoryOwner": p.Source.Owner(),
+				"PipelineName":               p.Name,
 			},
 		},
 	}
-
-	for _, step := range p.Steps {
-		step.Run(nil)
-	}
-
-	return nil
-}
-
-func (p *AWSCodePipeline) Delete(interface{}) error {
-	return nil
-
-}
-
-func (p *AWSCodePipeline) Read(interface{}) interface{} {
-	return nil
-
 }
