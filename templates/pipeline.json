@@ -28,7 +28,12 @@
                                         "Fn::Join": [
                                                 "-",
                                                 [
-                                                        "codepipeline-eu-west-1",
+                                                        {
+                                                                "Ref": "PipelineName"
+                                                        },
+                                                        {
+                                                                "Ref": "AWS::Region"
+                                                        },
                                                         {
                                                                 "Ref": "AWS::AccountId"
                                                         }
@@ -83,7 +88,28 @@
                                                                 "s3:PutObject"
                                                         ],
                                                         "Resource": [
-                                                                "arn:aws:s3:::codepipeline*",
+                                                                {
+                                                                  "Fn::Join": [
+                                                                        "",
+                                                                        [
+                                                                            "arn:aws:s3:::",
+                                                                            {
+                                                                              "Fn::Join": [
+                                                                                      "-",
+                                                                                      [
+                                                                                              {
+                                                                                                      "Ref": "PipelineName"
+                                                                                              },
+                                                                                              {
+                                                                                                      "Ref": "AWS::Region"
+                                                                                              },
+                                                                                              "*/*"
+                                                                                      ]
+                                                                              ]
+                                                                            }
+                                                                        ]
+                                                                  ]
+                                                                },
                                                                 "arn:aws:s3:::elasticbeanstalk*"
                                                         ],
                                                         "Effect": "Allow"
@@ -295,7 +321,9 @@
                                                                   "Version" : "1"
                                                           },
                                                           "Configuration": {
-                                                                  "ProjectName": "zero2Pipeline"
+                                                                  "ProjectName": {
+                                                                    "Ref": "PipelineName"
+                                                                  }
                                                           },
                                                           "InputArtifacts": [
                                                                   {
@@ -411,7 +439,9 @@
                 "BuildStage": {
                         "Type" : "AWS::CodeBuild::Project",
                         "Properties" : {
-                                "Name" : "zero2Pipeline",
+                                "Name" : {
+                                  "Ref": "PipelineName"
+                                },
                                 "Artifacts" : {
                                         "Packaging" : "NONE",
                                         "Name" : "build-artifact",
@@ -480,7 +510,28 @@
                                                         "Sid": "AllowCRUDArtifactsOnS3",
                                                         "Effect": "Allow",
                                                         "Resource": [
-                                                                "arn:aws:s3:::codepipeline-eu-west-1-*/*"
+                                                          {
+                                                            "Fn::Join": [
+                                                                  "",
+                                                                  [
+                                                                      "arn:aws:s3:::",
+                                                                      {
+                                                                        "Fn::Join": [
+                                                                                "-",
+                                                                                [
+                                                                                        {
+                                                                                                "Ref": "PipelineName"
+                                                                                        },
+                                                                                        {
+                                                                                                "Ref": "AWS::Region"
+                                                                                        },
+                                                                                        "*/*"
+                                                                                ]
+                                                                        ]
+                                                                      }
+                                                                  ]
+                                                            ]
+                                                          }
                                                         ],
                                                         "Action": [
                                                                 "s3:GetObject",
@@ -614,7 +665,17 @@
                                     }
                               },
                               "Description" : "Lambda Function that generates build-spec",
-                              "FunctionName" : "genBuildspec",
+                              "FunctionName" : {
+                                "Fn::Join": [
+                                  "-",
+                                  [
+                                    {
+                                      "Ref": "PipelineName"
+                                    },
+                                    "genBuildspec"
+                                  ]
+                                ]
+                              },
                               "Handler" : "genBuildspec.lambda_handler",
                               "Role": {
                                     "Fn::GetAtt" : [
@@ -644,7 +705,17 @@
                                     }
                               },
                               "Description" : "Lambda Function that generates build-time parameters",
-                              "FunctionName" : "genBuildParams",
+                              "FunctionName" : {
+                                "Fn::Join": [
+                                  "-",
+                                  [
+                                    {
+                                      "Ref": "PipelineName"
+                                    },
+                                    "genBuildParams"
+                                  ]
+                                ]
+                              },
                               "Handler" : "genBuildParams.lambda_handler",
                               "Role": {
                                     "Fn::GetAtt" : [
@@ -674,7 +745,17 @@
                                     }
                               },
                               "Description" : "Lambda Function that generates deploy-time parameters",
-                              "FunctionName" : "generateDeployParams",
+                              "FunctionName" : {
+                                "Fn::Join": [
+                                  "-",
+                                  [
+                                    {
+                                      "Ref": "PipelineName"
+                                    },
+                                    "generateDeployParams"
+                                  ]
+                                ]
+                              },
                               "Handler" : "generateParams.lambda_handler",
                               "Role": {
                                     "Fn::GetAtt" : [
