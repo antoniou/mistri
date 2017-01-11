@@ -30,7 +30,7 @@ func (p *AWSCodePipeline) createSteps() {
 			Template:  "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/lambda-store.json",
 			StackName: "s3-lambda-bucket",
 		},
-		&LambdaActor{
+		&LambdaInstallerActor{
 			S3Bucket:       "lambda-store-eu-west-1-329485089133",
 			S3KeyPrefix:    p.Name,
 			FunctionSource: "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/lambda",

@@ -8,20 +8,26 @@ import (
 	"github.com/antoniou/zero2Pipe/lambda"
 )
 
-// LambdaActor implements Actor
-type LambdaActor struct {
+// LambdaInstallerActor implements Actor
+// It installs all Lambda functions found under path
+// FunctionSource to AWS Lambda
+type LambdaInstallerActor struct {
 	S3Bucket       string
 	S3KeyPrefix    string
 	FunctionSource string
 }
 
-func (l *LambdaActor) Run(interface{}) error {
+// Run is the entrypoint to the Actor workload.
+// LambdaInstallerActor Run finds all functions under
+// FunctionSource path and uploads them to S3Bucket by
+// prefixing them with S3KeyPrefix
+func (l *LambdaInstallerActor) Run(interface{}) error {
 	log.Println("Installing functions!")
 	l.installFunctions()
 	return nil
 }
 
-func (l *LambdaActor) installFunction(name string) error {
+func (l *LambdaInstallerActor) installFunction(name string) error {
 	log.Printf("[DEBUG] Installing function %s", name)
 	f := lambda.NewFunction(map[string]string{
 		"name":        name,
@@ -32,7 +38,7 @@ func (l *LambdaActor) installFunction(name string) error {
 	return f.Setup()
 }
 
-func (l *LambdaActor) installFunctions() error {
+func (l *LambdaInstallerActor) installFunctions() error {
 	files, err := ioutil.ReadDir(l.FunctionSource)
 	if err != nil {
 		log.Fatal(err)
