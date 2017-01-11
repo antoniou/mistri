@@ -1,0 +1,17 @@
+---
+version: 0.1
+
+phases:
+    build:
+        commands:
+            - docker build -t {{ .pipelineName }} .
+    post_build:
+        commands:
+            - eval $(aws ecr get-login --region {{ .AWS_REGION }})
+            - 'docker tag {{ .pipelineName }}:latest {{ .AWS_ACCOUNT }}.dkr.ecr.{{ .AWS_REGION }}.amazonaws.com/{{ .pipelineName }}:${CODEBUILD_BUILD_ID#*:}'
+            - 'docker push  {{ .AWS_ACCOUNT }}.dkr.ecr.{{ .AWS_REGION }}.amazonaws.com/{{ .pipelineName }}:${CODEBUILD_BUILD_ID#*:}'
+            - 'echo ${CODEBUILD_BUILD_ID#*:} > build.version'
+artifacts:
+    files:
+        - 'Dockerrun.aws.json'
+        - 'build.version'
