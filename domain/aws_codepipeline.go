@@ -35,7 +35,7 @@ func (p *AWSCodePipeline) createSteps() {
 			AWSActor: &AWSActor{
 				Context: p.Context,
 			},
-			Template:  "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/lambda-store.json",
+			Template:  "templates/lambda-store.json",
 			StackName: fmt.Sprintf("%s-lambda-store", p.Name),
 			Parameters: map[string]string{
 				"LambdaBucketName": lambdaS3Bucket,
@@ -44,8 +44,8 @@ func (p *AWSCodePipeline) createSteps() {
 		&LambdaGeneratorActor{
 			Generator: NewGenerator("AWSBuildspecGenerator"),
 			params: map[string]string{
-				"FunctionSource": "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/lambda/genBuildspec",
-				"Template":       "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/buildspec.yml.tmpl",
+				"FunctionSource": "templates/lambda/genBuildspec",
+				"Template":       "templates/buildspec.yml.tmpl",
 				"pipelineName":   p.Name,
 				"AWS_ACCOUNT":    p.Context.Props["account"],
 				"AWS_REGION":     p.Context.Props["region"],
@@ -54,13 +54,13 @@ func (p *AWSCodePipeline) createSteps() {
 		&LambdaInstallerActor{
 			S3Bucket:       lambdaS3Bucket,
 			S3KeyPrefix:    p.Name,
-			FunctionSource: "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/lambda",
+			FunctionSource: "templates/lambda",
 		},
 		&CloudFormationActor{
 			AWSActor: &AWSActor{
 				Context: p.Context,
 			},
-			Template:  "/Users/nassos/workspace/go/src/github.com/antoniou/zero2Pipe/templates/pipeline.json",
+			Template:  "templates/pipeline.json",
 			StackName: p.Name,
 			Parameters: map[string]string{
 				"ApplicationRepositoryName":       p.Source.Name(),
