@@ -63,7 +63,7 @@ func (c *PathSource) resolve() error {
 func (c *PathSource) authenticate() error {
 	// !!!!!!!!FIXME!!!!!!!!
 	buf := bytes.NewBuffer(nil)
-	f, err := os.Open("../.githubaccess")
+	f, err := os.Open(".githubaccess")
 	if err != nil {
 		log.Fatal(err)
 		return err
