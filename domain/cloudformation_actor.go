@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/cloudformation/cloudformationiface"
 )
@@ -16,20 +15,15 @@ import (
 // CloudFormationActor implements the Actor interface and provisions a
 // cloudformation stack
 type CloudFormationActor struct {
+	*AWSActor
 	Template   string
 	StackName  string
 	Parameters map[string]string
 }
 
 func (c *CloudFormationActor) Run(interface{}) error {
-	session, err := session.NewSession()
-	if err != nil {
-		fmt.Println("failed to create session,", err)
-		return err
-	}
-
-	svc := cloudformation.New(session)
-	err = c.createStack(svc)
+	svc := cloudformation.New(c.Context.Session)
+	err := c.createStack(svc)
 	if err != nil {
 		log.Printf("Failed to create stack: %s", err)
 	}

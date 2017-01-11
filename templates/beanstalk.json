@@ -53,8 +53,7 @@
     },
     "PublicProdUrl": {
       "Type": "String",
-      "Description": "Publicly accessible production URL to be setup on the CDN",
-      "Default": "myaccount.stockport.gov.uk"
+      "Description": "Publicly accessible production URL to be setup on the CDN"
     },
     "MinInstanceCount": {
       "Type": "String",
