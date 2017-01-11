@@ -44,8 +44,7 @@
     },
     "S3ConfigBucketName": {
       "Type": "String",
-      "Description": "Name of S3 bucket to retrieve Dockerrun configuration from",
-      "Default": "codepipeline-eu-west-1-329485089133"
+      "Description": "Name of S3 bucket to retrieve Dockerrun configuration from"
     },
     "S3ConfigBucketObject": {
       "Type": "String",
