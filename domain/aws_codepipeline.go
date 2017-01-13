@@ -42,10 +42,16 @@ func (p *AWSCodePipeline) createSteps() {
 			},
 		},
 		&LambdaGeneratorActor{
+			Generator: NewGenerator("AWSLambdaCodeExporter"),
+			params: map[string]string{
+				"dir": "templates",
+			},
+		},
+		&LambdaGeneratorActor{
 			Generator: NewGenerator("AWSBuildspecGenerator"),
 			params: map[string]string{
-				"FunctionSource": "templates/lambda/genBuildspec",
-				"Template":       "templates/buildspec.yml.tmpl",
+				"FunctionSource": "./.zero2Pipe/templates/lambda/genBuildspec",
+				"Template":       "./.zero2Pipe/templates/buildspec.yml.tmpl",
 				"pipelineName":   p.Name,
 				"AWS_ACCOUNT":    p.Context.Props["account"],
 				"AWS_REGION":     p.Context.Props["region"],
@@ -54,7 +60,7 @@ func (p *AWSCodePipeline) createSteps() {
 		&LambdaInstallerActor{
 			S3Bucket:       lambdaS3Bucket,
 			S3KeyPrefix:    p.Name,
-			FunctionSource: "templates/lambda",
+			FunctionSource: "./.zero2Pipe/templates/lambda",
 		},
 		&CloudFormationActor{
 			AWSActor: &AWSActor{

@@ -26,3 +26,4 @@ _testmain.go
 
 .githubaccess
 templates/lambda/genBuildspec/buildspec.yml
+.zero2Pipe

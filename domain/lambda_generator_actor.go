@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -12,6 +13,42 @@ type Generator func(conf map[string]string) error
 
 func NewGenerator(Type string) Generator {
 	return generators[Type]
+}
+
+func AWSLambdaCodeExporter(conf map[string]string) error {
+	return export(conf["dir"])
+}
+
+func export(file string) error {
+	var lambdaDir []string
+	lambdaDir, _ = AssetDir(file)
+	os.MkdirAll(filepath.Join(".zero2Pipe", file), 0777)
+
+	for _, f := range lambdaDir {
+		absf := filepath.Join(".", file, f)
+		_, err := AssetInfo(absf)
+		if err != nil {
+			export(absf)
+			continue
+		}
+
+		newfName := filepath.Join(".zero2Pipe", file, f)
+
+		newf, _ := os.Create(newfName)
+		data, err := Asset(absf)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_, err = newf.Write(data)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		newf.Close()
+
+	}
+
+	return nil
 }
 
 func AWSBuildspecGenerator(conf map[string]string) error {
@@ -45,4 +82,5 @@ func registerGenerator(name string, gen Generator) {
 
 func init() {
 	registerGenerator("AWSBuildspecGenerator", AWSBuildspecGenerator)
+	registerGenerator("AWSLambdaCodeExporter", AWSLambdaCodeExporter)
 }
