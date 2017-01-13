@@ -55,7 +55,8 @@ func (c *PathSource) resolve() error {
 	url := strings.TrimSpace(string(out))
 	urlItems := strings.Split(url, "/")
 
-	c.owner = urlItems[len(urlItems)-2]
+	ownerItems := strings.Split(urlItems[len(urlItems)-2], ":")
+	c.owner = ownerItems[len(ownerItems)-1]
 	c.name = urlItems[len(urlItems)-1]
 	return nil
 }
