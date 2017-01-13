@@ -1,11 +1,8 @@
 package domain
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"log"
-	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
@@ -88,13 +85,23 @@ func (c *CloudFormationActor) createStack(service cloudformationiface.CloudForma
 }
 
 func (c *CloudFormationActor) templateContents() (string, error) {
-	buf := bytes.NewBuffer(nil)
-	f, err := os.Open(c.Template)
+	// !!!!!!!!FIXME!!!!!!!!
+	// Changed TEMPORARILY to use binary assets instead of files
+	// from the filesystem. This should be revised for separation
+	// of concerns
+
+	// buf := bytes.NewBuffer(nil)
+	// f, err := os.Open(c.Template)
+	data, err := Asset(c.Template)
 	if err != nil {
 		fmt.Println(err.Error())
 		return "", err
+		// Asset was not found.
 	}
 
-	io.Copy(buf, f)
-	return string(buf.Bytes()), nil
+	// if err != nil {
+	// }
+
+	// io.Copy(buf, f)
+	return string(data), nil
 }

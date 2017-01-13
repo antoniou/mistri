@@ -39,7 +39,7 @@ func (suite *CloudformationActorTestSuite) SetupTest() {
 
 func (suite *CloudformationActorTestSuite) TestCreateStack() {
 	actor := CloudFormationActor{
-		Template:  "../templates/lambda-store.json",
+		Template:  "templates/lambda-store.json",
 		StackName: "s3-lambda-bucket",
 	}
 
@@ -55,7 +55,7 @@ func (suite *CloudformationActorTestSuite) TestCreateStack() {
 
 func (suite *CloudformationActorTestSuite) TestCreateStackInvalidTemplateFile() {
 	actor := CloudFormationActor{
-		Template:  "../templates/invalid-file.json",
+		Template:  "templates/invalid-file.json",
 		StackName: "s3-lambda-bucket",
 	}
 	err := actor.createStack(&suite.service)
@@ -68,7 +68,7 @@ func (suite *CloudformationActorTestSuite) TestCreateStackInvalidTemplateFile() 
 
 func (suite *CloudformationActorTestSuite) TestCreateStackReturnsWithErrors() {
 	actor := CloudFormationActor{
-		Template:  "../templates/lambda-store.json",
+		Template:  "templates/lambda-store.json",
 		StackName: "s3-lambda-bucket",
 	}
 
@@ -84,7 +84,7 @@ func (suite *CloudformationActorTestSuite) TestCreateStackReturnsWithErrors() {
 
 func (suite *CloudformationActorTestSuite) TestWaitUntilStackCreateCompleteReturnsWithErrors() {
 	actor := CloudFormationActor{
-		Template:  "../templates/lambda-store.json",
+		Template:  "templates/lambda-store.json",
 		StackName: "s3-lambda-bucket",
 	}
 
@@ -101,7 +101,7 @@ func (suite *CloudformationActorTestSuite) TestWaitUntilStackCreateCompleteRetur
 
 func (suite *CloudformationActorTestSuite) TestCreateStackIsCalledWithRightParameters() {
 	actor := CloudFormationActor{
-		Template:  "../templates/lambda-store.json",
+		Template:  "templates/lambda-store.json",
 		StackName: "s3-lambda-bucket",
 		Parameters: map[string]string{
 			"foo": "bar",
