@@ -17,7 +17,7 @@ help:
 	@echo "  get-deps-tests          to get the SDK's test dependencies"
 	@echo "  get-deps-verify         to get the SDK's verification dependencies"
 
-get-deps: get-deps-tests get-deps-verify
+get-deps: generate get-deps-tests get-deps-verify
 	@echo "go get dependencies"
 	@go get -v $(TOOL_ONLY_PKGS)
 
@@ -31,6 +31,11 @@ get-deps-tests:
 get-deps-verify:
 	@echo "go get verification utilities"
 	@if [ \( -z "${SDK_GO_1_4}" \) -a \( -z "${SDK_GO_1_5}" \) ]; then  go get github.com/golang/lint/golint; else echo "skipped getting golint"; fi
+
+generate: gen-bindata
+
+gen-bindata:
+	go generate main.go
 
 build:
 	@echo "go build SDK and vendor packages"
