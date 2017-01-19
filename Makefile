@@ -35,7 +35,7 @@ get-deps-verify:
 generate: gen-bindata
 
 gen-bindata:
-	go get -u github.com/jteeuwen/go-bindata/...
+	go get -u github.com/jteeuwen/go-bindata/... 
 	go generate main.go
 
 build:

@@ -24,6 +24,15 @@ _testmain.go
 *.test
 *.prof
 
+# Temporary github token file
 .githubaccess
+
+# Generated buildspec file
 templates/lambda/genBuildspec/buildspec.yml
+
+# Temporary output of template files
 .zero2Pipe
+
+# Generated binary data from files using go-bindata
+*/template.go
+
