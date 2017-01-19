@@ -35,7 +35,7 @@ get-deps-verify:
 generate: gen-bindata
 
 gen-bindata:
-	echo $PATH
+	echo "${PATH}"
 	go generate main.go
 
 build:
