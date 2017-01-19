@@ -124,6 +124,16 @@
 			"Rev": "34836244f5c4e694b99d1a81898af5559a3c9c6d"
 		},
 		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/cloudformation/cloudformationiface",
+			"Comment": "v1.6.8-3-g3483624",
+			"Rev": "34836244f5c4e694b99d1a81898af5559a3c9c6d"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/iam",
+			"Comment": "v1.6.8-3-g3483624",
+			"Rev": "34836244f5c4e694b99d1a81898af5559a3c9c6d"
+		},
+		{
 			"ImportPath": "github.com/aws/aws-sdk-go/service/s3",
 			"Comment": "v1.6.8-3-g3483624",
 			"Rev": "34836244f5c4e694b99d1a81898af5559a3c9c6d"
@@ -157,6 +167,22 @@
 			"ImportPath": "github.com/urfave/cli",
 			"Comment": "v1.19.1",
 			"Rev": "0bdeddeeb0f650497d603c4ad7b20cfe685682f6"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "da2b4fa28524a3baf148c1b94df4440267063c88"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2",
+			"Rev": "314dd2c0bf3ebd592ec0d20847d27e79d0dbe8dd"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2/github",
+			"Rev": "314dd2c0bf3ebd592ec0d20847d27e79d0dbe8dd"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2/internal",
+			"Rev": "314dd2c0bf3ebd592ec0d20847d27e79d0dbe8dd"
 		}
 	]
 }
