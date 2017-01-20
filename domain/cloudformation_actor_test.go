@@ -61,7 +61,7 @@ func (suite *CloudformationActorTestSuite) TestCreateStackInvalidTemplateFile() 
 	err := actor.createStack(&suite.service)
 
 	assert.NotNil(suite.T(), err)
-	assert.Contains(suite.T(), err.Error(), "no such file")
+	assert.Contains(suite.T(), err.Error(), "not found")
 	suite.service.AssertNotCalled(suite.T(), "CreateStack")
 	suite.service.AssertExpectations(suite.T())
 }

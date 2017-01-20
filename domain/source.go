@@ -57,7 +57,8 @@ func (c *PathSource) resolve() error {
 
 	ownerItems := strings.Split(urlItems[len(urlItems)-2], ":")
 	c.owner = ownerItems[len(ownerItems)-1]
-	c.name = urlItems[len(urlItems)-1]
+	nameItems := urlItems[len(urlItems)-1]
+	c.name = nameItems[0 : len(nameItems)-len(".git")]
 	return nil
 }
 
@@ -81,6 +82,6 @@ func (c *PathSource) init() error {
 		return err
 	}
 
-	err = c.authenticate()
-	return err
+	// err = c.authenticate()
+	return nil
 }
