@@ -24,7 +24,7 @@ get-deps: generate get-deps-tests get-deps-verify
 get-deps-tests:
 	@echo "go get testing dependencies"
 	# go get github.com/gucumber/gucumber/cmd/gucumber
-	# go get github.com/stretchr/testify
+	go get github.com/stretchr/testify
 	# go get github.com/smartystreets/goconvey
 	# go get golang.org/x/net/html
 
@@ -35,7 +35,7 @@ get-deps-verify:
 generate: gen-bindata
 
 gen-bindata:
-	go get -u github.com/jteeuwen/go-bindata/... 
+	go get -u github.com/jteeuwen/go-bindata/...
 	go generate main.go
 
 build:
