@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type Zipper interface {
@@ -46,9 +45,12 @@ func (z LambdaZipper) Zip(source, target string) error {
 			return err
 		}
 
-		fmt.Println("Ading file ", path)
+		finalPath, _ := filepath.Rel(source, path)
+		fmt.Printf("Adding file %s\n", finalPath)
 		if baseDir != "" {
-			header.Name = filepath.Join(".", strings.TrimPrefix(path, source))
+			header.Name = finalPath
+			// filepath.Join(".", strings.TrimPrefix(path, source))
+
 		}
 
 		if info.IsDir() {
