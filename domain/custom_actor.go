@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -22,7 +23,7 @@ func AWSLambdaCodeExporter(conf map[string]string) error {
 func export(file string) error {
 	var lambdaDir []string
 	lambdaDir, _ = AssetDir(file)
-	os.MkdirAll(filepath.Join(".zero2Pipe", file), 0777)
+	os.MkdirAll(filepath.Join(".mistri", file), 0777)
 
 	for _, f := range lambdaDir {
 		absf := filepath.Join(".", file, f)
@@ -32,7 +33,7 @@ func export(file string) error {
 			continue
 		}
 
-		newfName := filepath.Join(".zero2Pipe", file, f)
+		newfName := filepath.Join(".mistri", file, f)
 
 		newf, _ := os.Create(newfName)
 		data, err := Asset(absf)
@@ -51,9 +52,13 @@ func export(file string) error {
 	return nil
 }
 
-func AWSBuildspecGenerator(conf map[string]string) error {
-	templates := template.Must(template.ParseGlob(conf["Template"]))
-	fo, err := os.Create(filepath.Join(conf["FunctionSource"], "buildspec.yml"))
+func AWSTemplateGenerator(conf map[string]string) error {
+	templateName := conf["Template"]
+	templates := template.Must(template.ParseGlob(templateName))
+	fileExtension := filepath.Ext(templateName)
+	renderedfileName := templateName[0 : len(templateName)-len(fileExtension)]
+	fmt.Printf("Creating %s\n", filepath.Base(renderedfileName))
+	fo, err := os.Create(filepath.Join(conf["FunctionSource"], filepath.Base(renderedfileName)))
 	if err != nil {
 		return err
 	}
@@ -66,14 +71,13 @@ func AWSBuildspecGenerator(conf map[string]string) error {
 	return nil
 }
 
-type LambdaGeneratorActor struct {
-	FunctionSource string
-	Generator      Generator
-	params         map[string]string
+type CustomActor struct {
+	Generator Generator
+	params    map[string]string
 }
 
-func (l *LambdaGeneratorActor) Run(interface{}) error {
-	return l.Generator(l.params)
+func (c *CustomActor) Run(interface{}) error {
+	return c.Generator(c.params)
 }
 
 func registerGenerator(name string, gen Generator) {
@@ -81,6 +85,6 @@ func registerGenerator(name string, gen Generator) {
 }
 
 func init() {
-	registerGenerator("AWSBuildspecGenerator", AWSBuildspecGenerator)
+	registerGenerator("AWSTemplateGenerator", AWSTemplateGenerator)
 	registerGenerator("AWSLambdaCodeExporter", AWSLambdaCodeExporter)
 }

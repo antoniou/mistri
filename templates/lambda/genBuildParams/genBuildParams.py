@@ -52,12 +52,14 @@ def lambda_handler(event, context):
         attributes = {
             'version': version
         }
-        
-        artifact_data = find_artifact(artifacts, 'MyInfra')
-        template_file = 'Dockerrun.aws.json.j2'
-        file_data = get_file_from_artifact(s3, artifact_data, template_file)
 
+        template_file = 'Dockerrun.aws.json.j2'
+        with open(template_file, 'r') as content_file:
+            file_data = content_file.read()
+
+        # Render Dockerrun template
         rendered_data = Environment().from_string(file_data).render(attributes)
+
         output_artifact = generate_output_artifact({ 'Dockerrun.aws.json': rendered_data })
 
         outputArtifactDetails = find_artifact(job_data['outputArtifacts'], 'GenBuildParams')
@@ -144,7 +146,7 @@ def get_file_from_artifact(s3, artifact, file_in_zip):
     tmp_file = tempfile.NamedTemporaryFile()
     bucket = artifact['location']['s3Location']['bucketName']
     key = artifact['location']['s3Location']['objectKey']
-    
+
     print("Downloading file {} from bucket {}".format(key, bucket))
 
     with tempfile.NamedTemporaryFile() as tmp_file:

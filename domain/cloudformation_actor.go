@@ -56,11 +56,26 @@ func (c *CloudFormationActor) createStackInput() (*cloudformation.CreateStackInp
 
 }
 
+func (c *CloudFormationActor) appendDynamicParameters() {
+	for pkey, pvalue := range c.Parameters {
+		if pvalue != "" {
+			continue
+		}
+
+		dynamicValue, ok := c.Context.Props[pkey]
+		if ok {
+			c.Parameters[pkey] = dynamicValue
+		}
+	}
+}
+
 func (c *CloudFormationActor) createStack(service cloudformationiface.CloudFormationAPI) error {
+
+	c.appendDynamicParameters()
+
 	params, err := c.createStackInput()
 	if err != nil {
-		fmt.Printf("Error creating Stack Input Parameters: %s", err.Error())
-		return err
+		return fmt.Errorf("Error creating Stack Input Parameters: %s", err.Error())
 	}
 
 	resp, err := service.CreateStack(params)
