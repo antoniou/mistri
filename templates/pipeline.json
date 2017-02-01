@@ -357,9 +357,6 @@
                                                           "InputArtifacts": [
                                                                   {
                                                                           "Name": "MyAppBuild"
-                                                                  },
-                                                                  {
-                                                                          "Name": "MyInfra"
                                                                   }
                                                           ],
                                                           "OutputArtifacts": [
