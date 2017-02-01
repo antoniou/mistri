@@ -7,7 +7,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-//Client represents a zero2Pipe command line client
+//Client represents a Mistri command line client
 type Client struct {
 	app      *cli.App
 	commands map[string]Command
@@ -42,7 +42,7 @@ func New() (c *Client) {
 	c.RegisterCommands()
 
 	app := cli.NewApp()
-	app.Name = "Zero2Pipeline"
+	app.Name = "Mistri"
 	app.Usage = ""
 	app.Commands = []cli.Command{}
 	for name, cmd := range c.commands {

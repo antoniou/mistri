@@ -41,26 +41,44 @@ func (p *AWSCodePipeline) createSteps() {
 				"LambdaBucketName": lambdaS3Bucket,
 			},
 		},
-		&LambdaGeneratorActor{
+		&CustomActor{
 			Generator: NewGenerator("AWSLambdaCodeExporter"),
 			params: map[string]string{
 				"dir": "templates",
 			},
 		},
-		&LambdaGeneratorActor{
-			Generator: NewGenerator("AWSBuildspecGenerator"),
+		&GithubAuthorisationActor{
+			AWSActor: &AWSActor{
+				Context: p.Context,
+			},
+		},
+		&CustomActor{
+			Generator: NewGenerator("AWSTemplateGenerator"),
 			params: map[string]string{
-				"FunctionSource": "./.zero2Pipe/templates/lambda/genBuildspec",
-				"Template":       "./.zero2Pipe/templates/buildspec.yml.tmpl",
+				"FunctionSource": "./.mistri/templates/lambda/genBuildspec",
+				"Template":       "./.mistri/templates/buildspec.yml.tmpl",
 				"pipelineName":   p.Name,
 				"AWS_ACCOUNT":    p.Context.Props["account"],
 				"AWS_REGION":     p.Context.Props["region"],
 			},
 		},
+		&CustomActor{
+			Generator: NewGenerator("AWSTemplateGenerator"),
+			params: map[string]string{
+				"FunctionSource": "./.mistri/templates/lambda/genBuildParams",
+				"Template":       "./.mistri/templates/Dockerrun.aws.json.j2.tmpl",
+				"pipelineName":   p.Name,
+				"AWS_ACCOUNT":    p.Context.Props["account"],
+				"AWS_REGION":     p.Context.Props["region"],
+				"host_port":      "80",
+				"container_port": "3000",
+				"version":        "{{ version }}",
+			},
+		},
 		&LambdaInstallerActor{
 			S3Bucket:       lambdaS3Bucket,
 			S3KeyPrefix:    p.Name,
-			FunctionSource: "./.zero2Pipe/templates/lambda",
+			FunctionSource: "./.mistri/templates/lambda",
 		},
 		&CloudFormationActor{
 			AWSActor: &AWSActor{
@@ -71,9 +89,9 @@ func (p *AWSCodePipeline) createSteps() {
 			Parameters: map[string]string{
 				"ApplicationRepositoryName":       p.Source.Name(),
 				"ApplicationRepositoryOwner":      p.Source.Owner(),
-				"ApplicationRepositoryOAuthToken": p.Source.Auth(),
 				"PipelineName":                    p.Name,
 				"LambdaBucketName":                lambdaS3Bucket,
+				"ApplicationRepositoryOAuthToken": "",
 			},
 		},
 	}

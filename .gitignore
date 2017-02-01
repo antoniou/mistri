@@ -31,8 +31,7 @@ _testmain.go
 templates/lambda/genBuildspec/buildspec.yml
 
 # Temporary output of template files
-.zero2Pipe
+.mistri
 
 # Generated binary data from files using go-bindata
 */template.go
-
